@@ -1,0 +1,66 @@
+{% comment %}
+  ARV CoreTech® size chart.
+  Source: manufacturer garment measurements in centimeters (provided by ARV Wear).
+  Inches are calculated from the centimeter values (cm / 2.54, 1 decimal).
+  No weight, height or body-type recommendations are shown on purpose.
+
+  Default unit: inches for visitors in the United States, centimeters elsewhere.
+
+  Accepts:
+  - id: {String} unique suffix (the chart can appear twice on a page)
+{% endcomment %}
+{%- liquid
+  # size | length cm | chest cm | shoulder cm  (XXXL is shown as 3XL for consistency)
+  assign rows = 'S|60|80|34.5,M|61.5|84|35,L|63|88|35.5,XL|65|92|36,XXL|67|96|36.5,3XL|69|100|37,4XL|73.5|103|37.5,5XL|75.5|104|38' | split: ','
+  if localization.country.iso_code == 'US'
+    assign default_unit = 'in'
+  else
+    assign default_unit = 'cm'
+  endif
+-%}
+<div class="arv-size-chart" data-arv-units data-unit="{{ default_unit }}" id="ArvSizeChart-{{ id }}">
+  <div class="arv-size-chart__toolbar">
+    <p class="arv-size-chart__source">{{ 'arv.size_chart.source' | t }}</p>
+    <div class="arv-unit-toggle" role="group" aria-label="{{ 'arv.size_chart.unit_toggle' | t }}">
+      <button type="button" data-set-unit="in" aria-pressed="{% if default_unit == 'in' %}true{% else %}false{% endif %}">{{ 'arv.size_chart.unit_in' | t }}</button>
+      <button type="button" data-set-unit="cm" aria-pressed="{% if default_unit == 'cm' %}true{% else %}false{% endif %}">{{ 'arv.size_chart.unit_cm' | t }}</button>
+    </div>
+  </div>
+  <div class="arv-size-chart__scroll">
+    <table class="arv-size-chart__table">
+      <thead>
+        <tr>
+          <th scope="col">{{ 'arv.size_chart.size' | t }}</th>
+          <th scope="col">{{ 'arv.size_chart.chest' | t }} <span class="arv-unit arv-unit--in">({{ 'arv.size_chart.unit_in' | t }})</span><span class="arv-unit arv-unit--cm">({{ 'arv.size_chart.unit_cm' | t }})</span></th>
+          <th scope="col">{{ 'arv.size_chart.length' | t }} <span class="arv-unit arv-unit--in">({{ 'arv.size_chart.unit_in' | t }})</span><span class="arv-unit arv-unit--cm">({{ 'arv.size_chart.unit_cm' | t }})</span></th>
+          <th scope="col">{{ 'arv.size_chart.shoulder' | t }} <span class="arv-unit arv-unit--in">({{ 'arv.size_chart.unit_in' | t }})</span><span class="arv-unit arv-unit--cm">({{ 'arv.size_chart.unit_cm' | t }})</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        {%- for row in rows -%}
+          {%- assign cells = row | split: '|' -%}
+          <tr>
+            <th scope="row">{{ cells[0] }}</th>
+            {%- for index in (1..3) -%}
+              {%- liquid
+                case index
+                  when 1
+                    assign cm = cells[2]
+                  when 2
+                    assign cm = cells[1]
+                  when 3
+                    assign cm = cells[3]
+                endcase
+                assign inches = cm | times: 1.0 | divided_by: 2.54 | round: 1
+              -%}
+              <td>
+                <span class="arv-unit arv-unit--in">{{ inches }}</span>
+                <span class="arv-unit arv-unit--cm">{{ cm }}</span>
+              </td>
+            {%- endfor -%}
+          </tr>
+        {%- endfor -%}
+      </tbody>
+    </table>
+  </div>
+</div>

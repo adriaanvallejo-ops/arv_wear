@@ -88,7 +88,13 @@
                     {{ product.selected_or_first_available_variant.price | money }} •
                   {% endif %}
                 </span>
-                <span class="main-atc__label__text">{{ 'products.product.add_to_cart' | t }}</span>
+                <span class="main-atc__label__text">
+                  {%- if block.settings.skip_cart -%}
+                    {{- 'arv.product.buy_now' | t -}}
+                  {%- else -%}
+                    {{- 'products.product.add_to_cart' | t -}}
+                  {%- endif -%}
+                </span>
               {%- endif -%}
             </span>
             <div class="loading-overlay__spinner hidden">

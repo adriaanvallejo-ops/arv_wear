@@ -1,0 +1,35 @@
+{% comment %}
+  Star rating from the real review data stored by Judge.me in the standard
+  Shopify metafields reviews.rating / reviews.rating_count.
+  Renders nothing when there are no reviews. No values are invented.
+
+  Accepts:
+  - product: {Object}
+  - link: {String} optional anchor/URL for the rating
+{% endcomment %}
+{%- liquid
+  assign rating_value = product.metafields.reviews.rating.value.rating | default: 0
+  assign rating_count = product.metafields.reviews.rating_count.value | default: 0
+-%}
+{%- if rating_count > 0 and rating_value > 0 -%}
+  {%- liquid
+    assign rating_display = rating_value | times: 1.0 | round: 1
+    assign rating_percent = rating_value | times: 20.0 | round: 1
+  -%}
+  {%- capture rating_inner -%}
+    <span class="arv-stars" style="--arv-rating: {{ rating_percent }}%;" aria-hidden="true"></span>
+    <span class="arv-rating__value">{{ rating_display }}</span>
+    <span class="arv-rating__count">
+      ({{ 'arv.product.reviews_count' | t: count: rating_count }}
+      {%- if settings.arv_reviews_imported %} · {{ 'arv.reviews.source_short' | t }}{% endif -%})
+    </span>
+    <span class="visually-hidden">{{ 'arv.product.rating_aria' | t: rating: rating_display }}</span>
+  {%- endcapture -%}
+  <div class="arv-rating">
+    {%- if link != blank -%}
+      <a href="{{ link }}" class="arv-rating__link">{{ rating_inner }}</a>
+    {%- else -%}
+      {{ rating_inner }}
+    {%- endif -%}
+  </div>
+{%- endif -%}

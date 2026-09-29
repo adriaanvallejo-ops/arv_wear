@@ -54,7 +54,7 @@
                   | replace: '[name]', option.name
                   | replace: '[name_lowercase]', downcase_name
                   | replace: '[name_uppercase]', uppercase_name
-                  | replace: '[selected]', option.selected_value
+                  | replace: '[selected]', option.selected_value | replace: 'XXXL', '3XL'
                 }}
               </span>
             {% endif %}

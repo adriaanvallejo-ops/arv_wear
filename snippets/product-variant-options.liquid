@@ -74,6 +74,13 @@
     endfor
   -%}
 
+  {%- liquid
+    # Display-only label: keeps the real option value, shows "3XL" instead of "XXXL" for consistent US sizing.
+    assign display_value = value
+    if value == 'XXXL'
+      assign display_value = '3XL'
+    endif
+  -%}
   {% case type %}
     {% when 'quantity-breaks' %}
       <input
@@ -254,7 +261,7 @@
         </div>
         <label class="color-swatch_hidden-label" for="{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}">
         </label>
-        <span class="color-swatch__label">{{ value }}</span>
+        <span class="color-swatch__label">{{ display_value }}</span>
       </div>
     {%- when 'pills' -%}
       <input
@@ -271,7 +278,7 @@
         {% endif %}
       >
       <label class="accent-color-{{ settings.variant_pills_accent_color }}{% if settings.variant_pills_bold_text %} variant-pills--bold{% endif %}" for="{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}">
-        {{ value -}}
+        {{ display_value -}}
         <span class="visually-hidden">{{ 'products.product.variant_sold_out_or_unavailable' | t }}</span>
       </label>
     {%- when 'dropdown' -%}
@@ -282,9 +289,9 @@
         {% endif %}
       >
         {% if option_disabled -%}
-          {{- 'products.product.value_unavailable' | t: option_value: value -}}
+          {{- 'products.product.value_unavailable' | t: option_value: display_value -}}
         {%- else -%}
-          {{- value -}}
+          {{- display_value -}}
         {%- endif %}
       </option>
   {% endcase %}

@@ -1,3 +1,18 @@
+{%- liquid
+  # Empty settings = translated defaults from the locale files (English / Spanish)
+  assign arv_placeholder = block.settings.placeholder
+  if arv_placeholder == blank
+    assign arv_placeholder = 'arv.cart.discount_placeholder' | t
+  endif
+  assign arv_btn_label = block.settings.btn_label
+  if arv_btn_label == blank
+    assign arv_btn_label = 'arv.cart.discount_button' | t
+  endif
+  assign arv_error_msg = block.settings.error_msg
+  if arv_error_msg == blank
+    assign arv_error_msg = 'arv.cart.discount_error' | t
+  endif
+-%}
 <div
   class="cart-discount{% if block.settings.bottom_separator %} cart-discount--bottom-separator{% endif %}"
   style="--margin-top: {{ block.settings.margin_top | divided_by: 10.0 }}rem;--margin-bottom: {{ block.settings.margin_bottom | divided_by: 10.0 }}rem;"
@@ -11,13 +26,13 @@
           autocomplete="name"
           type="text"
           name="cart-discount-field"
-          placeholder="{{ block.settings.placeholder }}"
+          placeholder="{{ arv_placeholder | escape }}"
           oninput="handleDiscountFormChange(event)"
         >
-        <label class="field__label" for="cart-discount-field">{{ block.settings.placeholder }}</label>
+        <label class="field__label" for="cart-discount-field">{{ arv_placeholder }}</label>
       </div>
-      <button class="button" type="submit">{{ block.settings.btn_label }}</button>
+      <button class="button" type="submit">{{ arv_btn_label }}</button>
     </div>
-    <p class="cart-discount-form__error">{{ block.settings.error_msg }}</p>
+    <p class="cart-discount-form__error">{{ arv_error_msg }}</p>
   </form>
 </div>

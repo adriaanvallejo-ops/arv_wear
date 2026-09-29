@@ -249,6 +249,8 @@
               >
                 <span class="visually-hidden">{{ 'products.product.sku' | t }}:</span> {{- product.selected_or_first_available_variant.sku -}}
               </p>
+            {%- when 'arv_content' -%}
+              {% render 'arv-product-content', block: block, product: product, section_id: section.id %}
             {%- when 'custom_liquid' -%}
               {{ block.settings.custom_liquid }}
             {%- when 'collapsible_tab' -%}
@@ -381,6 +383,13 @@
                 </div>
               {%- endif -%}
             {%- when 'sticky_atc' -%}
+              {%- liquid
+                assign arv_sticky_label = 'products.product.add_to_cart' | t
+                assign arv_buy_blocks = section.blocks | where: 'type', 'buy_buttons'
+                if arv_buy_blocks.first.settings.skip_cart
+                  assign arv_sticky_label = 'arv.product.buy_now' | t
+                endif
+              -%}
               {% if block.settings.enable_custom_btn_color %}
                 {% style %}
                   #sticky-atc-{{ section.id }} .button {
@@ -596,7 +605,7 @@
                                 {{ product.selected_or_first_available_variant.price | money }} •
                               </span>
                             {% endif %}
-                            <span class="sticky-atc__label__text">{{ block.settings.button_label }}</span>
+                            <span class="sticky-atc__label__text">{{ block.settings.button_label | default: arv_sticky_label }}</span>
                           {%- endif -%}
                         </span>
                         <div class="loading-overlay__spinner">
@@ -619,7 +628,7 @@
                               {{ product.selected_or_first_available_variant.price | money }} •
                             </span>
                           {% endif %}
-                          <span class="sticky-atc__label__text">{{ block.settings.button_label }}</span>
+                          <span class="sticky-atc__label__text">{{ block.settings.button_label | default: arv_sticky_label }}</span>
                         </span>
                       </button>
                     {% endif %}
@@ -902,32 +911,6 @@
     <script src="{{ 'product-model.js' | asset_url }}" defer></script>
   {%- endif -%}
 
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      function isIE() {
-        const ua = window.navigator.userAgent;
-        const msie = ua.indexOf('MSIE ');
-        const trident = ua.indexOf('Trident/');
-
-        return msie > 0 || trident > 0;
-      }
-
-      if (!isIE()) return;
-      const hiddenInput = document.querySelector('#{{ product_form_id }} input[name="id"]');
-      const noScriptInputWrapper = document.createElement('div');
-      const variantSwitcher =
-        document.querySelector('variant-radios[data-section="{{ section.id }}"]') ||
-        document.querySelector('variant-selects[data-section="{{ section.id }}"]');
-      noScriptInputWrapper.innerHTML = document.querySelector(
-        '.product-form__noscript-wrapper-{{ section.id }}'
-      ).textContent;
-      variantSwitcher.outerHTML = noScriptInputWrapper.outerHTML;
-
-      document.querySelector('#Variants-{{ section.id }}').addEventListener('change', function (event) {
-        hiddenInput.value = event.currentTarget.value;
-      });
-    });
-  </script>
 
   {%- liquid
     if product.selected_or_first_available_variant.featured_media
@@ -954,7 +937,7 @@
       {%- endif %}
       "brand": {
         "@type": "Brand",
-        "name": {{ product.vendor | json }}
+        "name": {{ shop.name | json }}
       },
       "offers": [
         {%- for variant in product.variants -%}
@@ -2100,6 +2083,12 @@
           "info": "A fixed amount of money (WITHOUT the currency symbol/code) that will be subtracted from the quantity's total price"
         },
         {
+          "type": "number",
+          "id": "option_1_free_quantity",
+          "label": "Option #1 Free items",
+          "info": "Number of free items included in this option (e.g. 1 for Buy 2, Get 1 Free). When set, the price shown is calculated as (quantity - free items) x item price in the visitor's currency and the title is generated automatically in each language. Must match the automatic discount configured in Shopify Admin."
+        },
+        {
           "type": "text",
           "id": "option_1_price_text",
           "label": "Option #1 Price text",
@@ -2185,6 +2174,12 @@
           "label": "Option #2 Fixed amount off",
           "default": "0",
           "info": "A fixed amount of money (WITHOUT the currency symbol/code) that will be subtracted from the quantity's total price"
+        },
+        {
+          "type": "number",
+          "id": "option_2_free_quantity",
+          "label": "Option #2 Free items",
+          "info": "Number of free items included in this option (e.g. 1 for Buy 2, Get 1 Free). When set, the price shown is calculated as (quantity - free items) x item price in the visitor's currency and the title is generated automatically in each language. Must match the automatic discount configured in Shopify Admin."
         },
         {
           "type": "text",
@@ -2274,6 +2269,12 @@
           "info": "A fixed amount of money (WITHOUT the currency symbol/code) that will be subtracted from the quantity's total price"
         },
         {
+          "type": "number",
+          "id": "option_3_free_quantity",
+          "label": "Option #3 Free items",
+          "info": "Number of free items included in this option (e.g. 1 for Buy 2, Get 1 Free). When set, the price shown is calculated as (quantity - free items) x item price in the visitor's currency and the title is generated automatically in each language. Must match the automatic discount configured in Shopify Admin."
+        },
+        {
           "type": "text",
           "id": "option_3_price_text",
           "label": "Option #3 Price text",
@@ -2359,6 +2360,12 @@
           "label": "Option #4 Fixed amount off",
           "default": "0",
           "info": "A fixed amount of money (WITHOUT the currency symbol/code) that will be subtracted from the quantity's total price"
+        },
+        {
+          "type": "number",
+          "id": "option_4_free_quantity",
+          "label": "Option #4 Free items",
+          "info": "Number of free items included in this option (e.g. 1 for Buy 2, Get 1 Free). When set, the price shown is calculated as (quantity - free items) x item price in the visitor's currency and the title is generated automatically in each language. Must match the automatic discount configured in Shopify Admin."
         },
         {
           "type": "text",
@@ -3217,6 +3224,46 @@
           "unit": "px",
           "label": "Bottom margin",
           "default": 15
+        }
+      ]
+    },
+    {
+      "type": "arv_content",
+      "name": "ARV content",
+      "settings": [
+        {
+          "type": "select",
+          "id": "content",
+          "label": "Content",
+          "options": [
+            { "value": "rating", "label": "Rating (Judge.me data)" },
+            { "value": "tagline", "label": "Short description + highlights" },
+            { "value": "size_guide", "label": "Size guide link + popup" },
+            { "value": "assurance", "label": "Shipping / returns / secure checkout" },
+            { "value": "details", "label": "Product details accordions" }
+          ],
+          "default": "tagline",
+          "info": "Texts come from the theme language files (English for the US, Spanish for Spain). Edit them in Online Store > Themes > ... > Edit default theme content, section \"arv\"."
+        },
+        {
+          "type": "range",
+          "id": "margin_top",
+          "min": 0,
+          "max": 60,
+          "step": 3,
+          "unit": "px",
+          "label": "Top margin",
+          "default": 12
+        },
+        {
+          "type": "range",
+          "id": "margin_bottom",
+          "min": 0,
+          "max": 60,
+          "step": 3,
+          "unit": "px",
+          "label": "Bottom margin",
+          "default": 12
         }
       ]
     },

@@ -1,0 +1,44 @@
+{% comment %}
+  Offer wording shared by the promo bar, bundle selector and CTA sections.
+  "Limited-time" wording is only used when enabled in Theme settings > ARV Wear
+  and, if an end date is set, only until that date. Nothing is shown after the
+  end date and no countdown is ever generated.
+
+  Accepts:
+  - part: {String} 'prefix' | 'heading' | 'ends'
+{% endcomment %}
+{%- liquid
+  assign limited = false
+  assign end_date = settings.arv_offer_end_date | strip
+  if settings.arv_limited_time
+    assign limited = true
+    if end_date != blank
+      assign today_num = 'now' | date: '%Y%m%d' | plus: 0
+      assign end_num = end_date | date: '%Y%m%d' | plus: 0
+      if end_num == 0 or end_num < today_num
+        assign limited = false
+      endif
+    endif
+  endif
+
+  case part
+    when 'prefix'
+      if limited
+        echo 'arv.promo.prefix_limited' | t
+      else
+        echo 'arv.promo.prefix' | t
+      endif
+    when 'heading'
+      if limited
+        echo 'arv.bundle.heading_limited' | t
+      else
+        echo 'arv.bundle.heading' | t
+      endif
+    when 'ends'
+      if limited and end_date != blank
+        assign date_format = 'arv.date_format' | t
+        assign formatted = end_date | date: date_format
+        echo 'arv.promo.ends_on' | t: date: formatted
+      endif
+  endcase
+-%}

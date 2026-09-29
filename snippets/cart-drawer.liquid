@@ -5,6 +5,7 @@
   {% render 'cart-drawer' %}
 {% endcomment %}
 
+{%- assign arv_discounts_label = 'arv.cart.discounts_label' | t -%}
 {% if settings.cart_drawer_collection != blank %}
   {{ 'component-card.css' | asset_url | stylesheet_tag }}
 {% endif %}
@@ -76,7 +77,14 @@
       {%- endif -%}
       <div class="drawer__header" style='--alignment:{{ section.settings.heading_alignment }}'>
         <h2 class="drawer__heading">
-          {% if section.settings.heading_text contains '[count]' %}
+          {%- liquid
+            # Empty setting = translated default from the locale files (English / Spanish)
+            assign arv_cart_heading = section.settings.heading_text
+            if arv_cart_heading == blank
+              assign arv_cart_heading = 'arv.cart.heading' | t
+            endif
+          -%}
+          {% if arv_cart_heading contains '[count]' %}
             {% liquid
               assign non_upsell_count = cart.item_count
               for item in cart.items
@@ -85,9 +93,9 @@
                 endif
               endfor
             %}
-            {{ section.settings.heading_text | replace: '[count]', non_upsell_count }}
+            {{ arv_cart_heading | replace: '[count]', non_upsell_count }}
           {% else %}
-            {{ section.settings.heading_text }}
+            {{ arv_cart_heading }}
           {% endif %}
         </h2>
         <button
@@ -398,7 +406,13 @@
                                         {% if block.settings.enable_savings %}
                                           <span class='cart-drawer-item__saving text-color-{{ block.settings.savings_color }}'>
                                             {% capture saved_money_span  %}{{ item_saving | money_without_trailing_zeros }}{% endcapture %}
-                                            {{ block.settings.savings_text | replace: '[amount]', saved_money_span }}
+                                            {%- liquid
+                                              assign arv_savings_text = block.settings.savings_text
+                                              if arv_savings_text == blank
+                                                assign arv_savings_text = 'arv.cart.savings_text' | t
+                                              endif
+                                            -%}
+                                            {{ arv_savings_text | replace: '[amount]', saved_money_span }}
                                           </span>
                                         {% endif %}
                                       {% else %}
@@ -543,7 +557,13 @@
                     {% if total_savings > 0 %}
                       {% capture savings_money %}<span class='cart-drawer__totals__row__money'>{{ total_savings | money }}</span>{% endcapture %}
                       <p class='cart-drawer__totals__row cart-drawer__totals__row--{{ block.settings.savings_alignment }} text-color-{{ block.settings.savings_text_color }}' style='--text-size:{{ block.settings.savings_text_size | divided_by: 10.0 }}rem;'>
-                        <span>{{ block.settings.savings_left_text | replace: '[savings]', savings_money }}</span><span>{{ block.settings.savings_right_text | replace: '[savings]', savings_money }}</span>
+                        {%- liquid
+                          assign arv_savings_label = block.settings.savings_left_text
+                          if arv_savings_label == blank
+                            assign arv_savings_label = 'arv.cart.savings_label' | t
+                          endif
+                        -%}
+                        <span>{{ arv_savings_label | replace: '[savings]', savings_money }}</span><span>{{ block.settings.savings_right_text | replace: '[savings]', savings_money }}</span>
                       </p>
                     {% endif %}
                   {% endif %}
@@ -556,7 +576,7 @@
                 </div>
                 {%- if block.settings.display_discounts and cart.cart_level_discount_applications.size > 0 -%}
                   <div class="cart-drawer__discounts cart-drawer__footer__discounts list-unstyled" style='--alignment:{{ block.settings.discounts_alignment }};' role="list" aria-label="{{ 'customer.order.discount' | t }}">
-                    <span class='cart-drawer__discounts__label'>{{ block.settings.discounts_label }}</span>
+                    <span class='cart-drawer__discounts__label'>{{ block.settings.discounts_label | default: arv_discounts_label }}</span>
                     {%- for discount in cart.cart_level_discount_applications -%}
                       <div class="badge">
                         {%- render 'icon-discount' -%}
@@ -569,8 +589,14 @@
                   {% capture total_savings_money %}
                     {{ total_compare_price | minus: cart.total_price | money_without_trailing_zeros }}
                   {% endcapture %}
+                  {%- liquid
+                    assign arv_total_savings_text = block.settings.savings_text
+                    if arv_total_savings_text == blank
+                      assign arv_total_savings_text = 'arv.cart.savings_text' | t
+                    endif
+                  -%}
                   <p class='cart-drawer__total-savings {{ block.settings.savings_alignment }} text-color-{{ block.settings.savings_text_color }}'>
-                    {{ block.settings.savings_text | replace: '[amount]', total_savings_money }}
+                    {{ arv_total_savings_text | replace: '[amount]', total_savings_money }}
                   </p>
                 {% endif %}
               </div>
