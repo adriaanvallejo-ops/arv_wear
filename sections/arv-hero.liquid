@@ -1,0 +1,138 @@
+{%- comment -%}
+  ARV Wear homepage hero. Mobile-first split layout: headline, value proposition,
+  real rating (Judge.me data), offer reminder and a single clear CTA.
+  Texts come from the locale files (English for the US, Spanish for Spain).
+{%- endcomment -%}
+{%- liquid
+  assign hero_product = section.settings.product
+  assign link = section.settings.link
+  if link == blank and hero_product != blank
+    assign link = hero_product.url
+  endif
+  if link == blank
+    assign link = routes.all_products_collection_url
+  endif
+  assign image = section.settings.image
+  if image == blank and hero_product != blank
+    assign image = hero_product.featured_image
+  endif
+  assign image_alt = image.alt
+  if image_alt == blank
+    assign image_alt = 'arv.hero.image_alt' | t
+  endif
+-%}
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.6 | round }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.6 | round }}px;
+  }
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+<div class="arv-hero color-{{ section.settings.color_scheme }} gradient">
+  <div class="arv-hero__grid page-width section-{{ section.id }}-padding">
+    <div class="arv-hero__media">
+      {%- if image != blank -%}
+        {{
+          image
+          | image_url: width: 1400
+          | image_tag:
+            loading: 'eager',
+            fetchpriority: 'high',
+            sizes: '(min-width: 990px) 50vw, 100vw',
+            widths: '375, 550, 750, 1000, 1400',
+            class: 'arv-hero__image',
+            alt: image_alt
+        }}
+      {%- else -%}
+        {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+      {%- endif -%}
+    </div>
+    <div class="arv-hero__content">
+      <p class="arv-eyebrow">{{ 'arv.hero.eyebrow' | t }}</p>
+      <h2 class="arv-hero__heading h0">{{ 'arv.hero.heading' | t }}</h2>
+      <p class="arv-hero__text">{{ 'arv.hero.text' | t }}</p>
+      {%- if hero_product != blank -%}
+        {%- render 'arv-rating', product: hero_product, link: hero_product.url -%}
+      {%- endif -%}
+      <p class="arv-hero__offer">{% render 'arv-icon', icon: 'tag' %}<span>{{ 'arv.promo.offer' | t }}</span></p>
+      <a class="button button--primary arv-hero__cta" href="{{ link }}">{{ 'arv.hero.cta' | t }}</a>
+      {%- if settings.arv_free_shipping -%}
+        <p class="arv-hero__note">{% render 'arv-icon', icon: 'truck' %}<span>{{ 'arv.promo.free_shipping' | t }}</span></p>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "ARV hero",
+  "tag": "section",
+  "class": "section arv-hero-section",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Headline and texts are translated automatically (English / Spanish). Edit them in Edit default theme content > arv > hero."
+    },
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Product",
+      "info": "Used for the rating, the default image and the button link."
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image",
+      "info": "Use a real photo of the product. Recommended: at least 1000 px wide."
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "Button link"
+    },
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "options": [
+        { "value": "accent-1", "label": "Accent 1" },
+        { "value": "accent-2", "label": "Accent 2" },
+        { "value": "background-1", "label": "Background 1" },
+        { "value": "background-2", "label": "Background 2" },
+        { "value": "inverse", "label": "Inverse" }
+      ],
+      "default": "background-2"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 40
+    }
+  ],
+  "presets": [
+    {
+      "name": "ARV hero"
+    }
+  ]
+}
+{% endschema %}

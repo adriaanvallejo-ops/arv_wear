@@ -470,7 +470,7 @@
         "contact_method_title": "Email or Phone"
       },
       "marketing": {
-        "accept_marketing_checkbox_label": "Send me live tracking and order updates"
+        "accept_marketing_checkbox_label": "Email me with news and offers"
       },
       "general": {
         "continue_to_payment_method": "Confirm Shipping Selection",
@@ -481,11 +481,157 @@
       },
       "payment": {
         "title": "Secure Checkout",
-        "card_security_notice": "All transactions are secure and encrypted. Your order includes free returns and 24/7 access to our award-winning customer service"
+        "card_security_notice": "All transactions are secure and encrypted."
       },
       "delivery_options": {
         "shipping_address": "Shipping Address"
       }
     }
+  },
+  "arv": {
+    "promo": {
+      "offer": "Buy 2, Get 1 Free • Buy 3, Get 2 Free",
+      "prefix": "Bundle & Save",
+      "prefix_limited": "Limited-time offer",
+      "ends_on": "Ends {{ date }}",
+      "free_shipping": "Free standard shipping",
+      "cta": "Shop now"
+    },
+    "product": {
+      "buy_now": "Buy Now",
+      "tagline": "A discreet compression undershirt designed for a smoother, more streamlined look under your everyday clothes.",
+      "highlight_1": "Discreet, low-profile compression",
+      "highlight_2": "Smooth look under shirts and tees",
+      "highlight_3": "Stretch fabric: 92% polyester, 8% spandex",
+      "reviews_count": {
+        "one": "{{ count }} review",
+        "other": "{{ count }} reviews"
+      },
+      "rating_aria": "Rated {{ rating }} out of 5",
+      "size_guide_link": "Size guide",
+      "mix_toggle": "Mix sizes or colors",
+      "mix_hint": "By default, every item in the bundle uses the color and size selected below. Open this to choose a different option for each item.",
+      "item_number": "Item {{ number }}",
+      "secure_checkout": "Secure checkout",
+      "returns_short": "30-day return window",
+      "free_shipping_short": "Free standard shipping"
+    },
+    "bundle": {
+      "heading": "Bundle & Save",
+      "heading_limited": "Limited-Time Bundle Offer",
+      "single": "Buy 1",
+      "buy_get": "Buy {{ buy }}, Get {{ get }} Free",
+      "items": {
+        "one": "{{ count }} item",
+        "other": "{{ count }} items"
+      },
+      "each": "{{ price }} each",
+      "save": "Save {{ amount }}",
+      "best_value": "Best value",
+      "auto_applied": "Bundle discount is applied automatically at checkout — no code needed.",
+      "nudge": "Don't miss the current bundle offer: get more, pay less."
+    },
+    "size_chart": {
+      "title": "Size Guide",
+      "source": "Garment measurements provided by the manufacturer.",
+      "unit_toggle": "Units",
+      "unit_in": "in",
+      "unit_cm": "cm",
+      "size": "Size",
+      "length": "Length",
+      "chest": "Chest",
+      "shoulder": "Shoulder",
+      "close": "Close"
+    },
+    "details": {
+      "heading": "Product details",
+      "material_title": "Details & Material",
+      "material_intro": "ARV CoreTech® is a compression undershirt designed to be worn under everyday clothing for a smoother, more streamlined look.",
+      "material_line": "Material: 92% polyester, 8% spandex",
+      "fit_line": "Fitted, stretchy compression fit",
+      "sizes_line": "Sizes: {{ sizes }}",
+      "care_title": "Care Instructions",
+      "care_1": "Place the garment in water below 30 °C (86 °F).",
+      "care_2": "Add detergent.",
+      "care_3": "Let it soak for 30 minutes.",
+      "shipping_title": "Shipping",
+      "shipping_free": "Free standard shipping on this order.",
+      "shipping_tracking": "You'll receive tracking information by email once your order ships.",
+      "shipping_checkout": "Shipping options and costs are confirmed at checkout.",
+      "shipping_policy_link": "Read our Shipping Policy",
+      "returns_title": "Returns",
+      "returns_body": "You can request a return within 30 days of receiving your order. Items must be unused, with tags, in their original packaging. Return shipping costs are paid by the customer.",
+      "returns_policy_link": "Read our Refund Policy"
+    },
+    "benefits": {
+      "heading": "Why ARV CoreTech®",
+      "subheading": "Built to be the layer nobody notices — except in how your clothes fit.",
+      "b1_title": "Discreet compression",
+      "b1_text": "A snug compression fit that stays low-profile under tees, button-downs and sweaters.",
+      "b2_title": "Smooth under clothing",
+      "b2_text": "Designed for a smoother, more streamlined look under your everyday clothes.",
+      "b3_title": "Fitted feel",
+      "b3_text": "Stretch fabric made with 92% polyester and 8% spandex that moves with you.",
+      "b4_title": "Designed for everyday wear",
+      "b4_text": "Made to be worn under work shirts, casual tees and date-night outfits."
+    },
+    "reviews": {
+      "heading": "Real photos from real buyers",
+      "summary": "{{ rating }} out of 5 · {{ count }} reviews",
+      "disclosure": "These reviews were imported from AliExpress, where buyers reviewed this garment. Reviews written in Spanish have been translated into English without changing their meaning. Any delivery times mentioned refer to AliExpress orders, not to orders placed on this store.",
+      "translated": "Translated from Spanish",
+      "read_all": "Read all reviews",
+      "photo_alt": "Customer photo from a review by {{ name }}",
+      "view_photo": "View photo {{ number }} from {{ name }}",
+      "source_short": "via AliExpress",
+      "anonymous": "AliExpress buyer",
+      "close": "Close",
+      "read_more": "Read more",
+      "read_less": "Show less"
+    },
+    "faq": {
+      "heading": "Frequently Asked Questions",
+      "q1": "How does the bundle offer work?",
+      "a1": "Choose the 3-item bundle (Buy 2, Get 1 Free) or the 5-item bundle (Buy 3, Get 2 Free). The discount is applied automatically at checkout — no code needed. You can mix sizes and colors within a bundle.",
+      "q2": "Which size should I choose?",
+      "a2": "Open the size guide on the product page to compare the manufacturer's garment measurements (length, chest and shoulder) in inches or centimeters.",
+      "q3": "What is it made of?",
+      "a3": "ARV CoreTech® is made of 92% polyester and 8% spandex.",
+      "q4": "How do I wear it?",
+      "a4": "It's designed to be worn as a base layer under everyday clothing, such as T-shirts, shirts and sweaters.",
+      "q5": "How do I care for it?",
+      "a5": "Place the garment in water below 30 °C (86 °F), add detergent and let it soak for 30 minutes.",
+      "q6": "How much is shipping?",
+      "a6_free": "Standard shipping is free. Available shipping options are confirmed at checkout.",
+      "a6": "Shipping options and costs are shown at checkout before you pay.",
+      "q7": "Can I track my order?",
+      "a7": "Yes. You'll receive tracking information by email once your order ships.",
+      "q8": "What is your return policy?",
+      "a8": "You can request a return within 30 days of receiving your order. Items must be unused, with tags, in their original packaging, and return shipping is paid by the customer. See our Refund Policy for full details.",
+      "contact": "Still have questions? Email us at {{ email }}."
+    },
+    "hero": {
+      "eyebrow": "ARV CoreTech® Compression Undershirt",
+      "heading": "A smoother look under every shirt.",
+      "text": "Discreet compression designed for a cleaner, more streamlined fit under your everyday clothes.",
+      "cta": "Shop ARV CoreTech®",
+      "image_alt": "ARV CoreTech® compression undershirt"
+    },
+    "cta": {
+      "heading": "Ready to upgrade your base layer?",
+      "text": "Pick your color and size, choose a bundle and check out in minutes.",
+      "nudge": "Stock up while the bundle offer is available.",
+      "button": "Shop Now"
+    },
+    "cart": {
+      "heading": "Your Cart • [count]",
+      "savings_text": "<strong>(You save [amount])</strong>",
+      "savings_label": "<strong>Savings</strong>",
+      "discounts_label": "<strong>Discounts:</strong>",
+      "discount_placeholder": "Discount code",
+      "discount_button": "Apply",
+      "discount_error": "Please enter a discount code."
+    },
+    "date_format": "%B %-d, %Y"
   }
 }

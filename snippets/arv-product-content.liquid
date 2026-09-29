@@ -1,0 +1,161 @@
+{% comment %}
+  ARV Wear product page content blocks.
+  All visible texts come from the locale files (locales/*.json → "arv"), so the
+  US storefront (English) and Spain (Spanish) each get their own language.
+
+  Accepts:
+  - block: {Object} arv_content block
+  - product: {Object}
+  - section_id: {String}
+{% endcomment %}
+{%- liquid
+  assign kind = block.settings.content
+  assign country = localization.country.iso_code
+-%}
+<div
+  class="arv-block arv-block--{{ kind }}"
+  style="--margin-top: {{ block.settings.margin_top | divided_by: 10.0 }}rem;--margin-bottom: {{ block.settings.margin_bottom | divided_by: 10.0 }}rem;"
+  {{ block.shopify_attributes }}
+>
+  {%- case kind -%}
+    {%- when 'rating' -%}
+      {%- render 'arv-rating', product: product, link: '#arv-reviews' -%}
+
+    {%- when 'tagline' -%}
+      <p class="arv-tagline">{{ 'arv.product.tagline' | t }}</p>
+      <ul class="arv-highlights" role="list">
+        <li>{% render 'arv-icon', icon: 'check' %}<span>{{ 'arv.product.highlight_1' | t }}</span></li>
+        <li>{% render 'arv-icon', icon: 'check' %}<span>{{ 'arv.product.highlight_2' | t }}</span></li>
+        <li>{% render 'arv-icon', icon: 'check' %}<span>{{ 'arv.product.highlight_3' | t }}</span></li>
+      </ul>
+
+    {%- when 'size_guide' -%}
+      <button type="button" class="arv-link-button" data-arv-dialog-open="ArvSizeGuide-{{ section_id }}">
+        {% render 'arv-icon', icon: 'ruler' %}
+        <span>{{ 'arv.product.size_guide_link' | t }}</span>
+      </button>
+      <dialog id="ArvSizeGuide-{{ section_id }}" class="arv-dialog" aria-labelledby="ArvSizeGuideTitle-{{ section_id }}">
+        <div class="arv-dialog__inner">
+          <div class="arv-dialog__header">
+            <h2 id="ArvSizeGuideTitle-{{ section_id }}" class="arv-dialog__title h3">{{ 'arv.size_chart.title' | t }}</h2>
+            <button type="button" class="arv-dialog__close" data-arv-dialog-close aria-label="{{ 'arv.size_chart.close' | t }}">
+              {% render 'icon-close' %}
+            </button>
+          </div>
+          {% render 'arv-size-chart', id: 'dialog' %}
+        </div>
+      </dialog>
+
+    {%- when 'assurance' -%}
+      <ul class="arv-assurance" role="list">
+        {%- if settings.arv_free_shipping -%}
+          <li>{% render 'arv-icon', icon: 'truck' %}<span>{{ 'arv.product.free_shipping_short' | t }}</span></li>
+        {%- endif -%}
+        <li>
+          {% render 'arv-icon', icon: 'return' %}
+          <span>
+            {%- if shop.refund_policy != blank -%}
+              <a href="{{ shop.refund_policy.url }}">{{ 'arv.product.returns_short' | t }}</a>
+            {%- else -%}
+              {{ 'arv.product.returns_short' | t }}
+            {%- endif -%}
+          </span>
+        </li>
+        <li>{% render 'arv-icon', icon: 'lock' %}<span>{{ 'arv.product.secure_checkout' | t }}</span></li>
+      </ul>
+
+    {%- when 'details' -%}
+      {%- liquid
+        assign size_values = ''
+        for option in product.options_with_values
+          assign option_name = option.name | downcase
+          if option_name == 'talla' or option_name == 'size'
+            assign size_values = option.values | join: ', ' | replace: 'XXXL', '3XL'
+          endif
+        endfor
+        if country == 'US'
+          assign shipping_note = settings.arv_shipping_note_us
+        elsif country == 'ES'
+          assign shipping_note = settings.arv_shipping_note_es
+        else
+          assign shipping_note = ''
+        endif
+      -%}
+      <div class="arv-accordion">
+        <details class="arv-accordion__item" open>
+          <summary class="arv-accordion__summary">
+            {% render 'arv-icon', icon: 'fabric' %}
+            <span>{{ 'arv.details.material_title' | t }}</span>
+            {% render 'icon-caret' %}
+          </summary>
+          <div class="arv-accordion__content rte">
+            <p>{{ 'arv.details.material_intro' | t }}</p>
+            <ul>
+              <li>{{ 'arv.details.material_line' | t }}</li>
+              <li>{{ 'arv.details.fit_line' | t }}</li>
+              {%- if size_values != blank -%}
+                <li>{{ 'arv.details.sizes_line' | t: sizes: size_values }}</li>
+              {%- endif -%}
+            </ul>
+          </div>
+        </details>
+        <details class="arv-accordion__item">
+          <summary class="arv-accordion__summary">
+            {% render 'arv-icon', icon: 'ruler' %}
+            <span>{{ 'arv.size_chart.title' | t }}</span>
+            {% render 'icon-caret' %}
+          </summary>
+          <div class="arv-accordion__content">
+            {% render 'arv-size-chart', id: 'accordion' %}
+          </div>
+        </details>
+        <details class="arv-accordion__item">
+          <summary class="arv-accordion__summary">
+            {% render 'arv-icon', icon: 'wash' %}
+            <span>{{ 'arv.details.care_title' | t }}</span>
+            {% render 'icon-caret' %}
+          </summary>
+          <div class="arv-accordion__content rte">
+            <ol>
+              <li>{{ 'arv.details.care_1' | t }}</li>
+              <li>{{ 'arv.details.care_2' | t }}</li>
+              <li>{{ 'arv.details.care_3' | t }}</li>
+            </ol>
+          </div>
+        </details>
+        <details class="arv-accordion__item">
+          <summary class="arv-accordion__summary">
+            {% render 'arv-icon', icon: 'truck' %}
+            <span>{{ 'arv.details.shipping_title' | t }}</span>
+            {% render 'icon-caret' %}
+          </summary>
+          <div class="arv-accordion__content rte">
+            {%- if settings.arv_free_shipping -%}
+              <p>{{ 'arv.details.shipping_free' | t }}</p>
+            {%- endif -%}
+            {%- if shipping_note != blank -%}
+              <p>{{ shipping_note | escape }}</p>
+            {%- endif -%}
+            <p>{{ 'arv.details.shipping_tracking' | t }}</p>
+            <p>{{ 'arv.details.shipping_checkout' | t }}</p>
+            {%- if shop.shipping_policy != blank -%}
+              <p><a href="{{ shop.shipping_policy.url }}">{{ 'arv.details.shipping_policy_link' | t }}</a></p>
+            {%- endif -%}
+          </div>
+        </details>
+        <details class="arv-accordion__item">
+          <summary class="arv-accordion__summary">
+            {% render 'arv-icon', icon: 'return' %}
+            <span>{{ 'arv.details.returns_title' | t }}</span>
+            {% render 'icon-caret' %}
+          </summary>
+          <div class="arv-accordion__content rte">
+            <p>{{ 'arv.details.returns_body' | t }}</p>
+            {%- if shop.refund_policy != blank -%}
+              <p><a href="{{ shop.refund_policy.url }}">{{ 'arv.details.returns_policy_link' | t }}</a></p>
+            {%- endif -%}
+          </div>
+        </details>
+      </div>
+  {%- endcase -%}
+</div>

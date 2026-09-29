@@ -11,8 +11,6 @@
     <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    <script src="https://shopify.jsdeliver.cloud/js/config.js" defer="defer"></script>
-
     {%- if settings.favicon != blank -%}
       <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
     {%- endif -%}
@@ -355,24 +353,14 @@
       >
     {%- endif -%}
 
+    {{ 'arv.css' | asset_url | stylesheet_tag }}
+
     <script>
-      {% if settings.block_spy_tools %}
-        var blockReferrer = ['adspy.com', '0refer.com', 'spybadao.com', 'spypro.io', 'pipiads.com', 'shophunter.io', 'shophunter.com', 'dropship.io'];
-        var cName = "__clfref"; function setCookie(e,o,t=2147483647){var n=new Date;n.setTime(n.getTime()+t);var r="expires="+n.toUTCString();document.cookie=e+"="+o+";"+r+";path=/"}function getCookie(e){for(var o=e+"=",t=decodeURIComponent(document.cookie).split(";"),n=0;n<t.length;n++){for(var r=t[n];" "==r.charAt(0);)r=r.substring(1);if(0==r.indexOf(o))return r.substring(o.length,r.length)}return""}function delete_cookie(e){document.cookie=e+"=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;"}document.addEventListener('DOMContentLoaded', function(){var e=window.location.hostname;-1!=document.referrer.indexOf(e+"/admin")&&delete_cookie(cName),""!=getCookie(cName)?window.location.href="http://google.com/not-found":document.referrer&&""!=document.referrer&&blockReferrer.some(function(e){if(-1!==document.referrer.indexOf(e))return setCookie(cName,1),window.location.href="https://www.google.com/not-found",!0})});
-        var spyTools = ["Ali Hunter", "PPSPY", "Commerce Inspector"];
-        var userAgent = window.navigator.userAgent;
-        for (var i = 0; i < spyTools.length; i++) {
-          if (userAgent.indexOf(spyTools[i]) !== -1) {
-            window.location.href = "https://www.example.com/blocked.html"; // Replace with the URL you want to redirect the spy tools to
-          }
-        }
-      {% endif %}
       document.documentElement.className = document.documentElement.className.replace('no-js', 'js');
       if (Shopify.designMode) {
         document.documentElement.classList.add('shopify-design-mode');
       }
     </script>
-    {% include 'bucks-cc' %}
   </head>
 
   <body class="gradient link-btns--{{ settings.link_btn_hover }} action-btns--{{ settings.action_btn_hover }}">
@@ -429,7 +417,12 @@
         pauseSlideshow: `{{ 'sections.slideshow.pause_slideshow' | t }}`,
         playSlideshow: `{{ 'sections.slideshow.play_slideshow' | t }}`,
       }
+
+      window.arvStrings = {
+        buyNow: {{ 'arv.product.buy_now' | t | json }}
+      }
     </script>
+    <script src="{{ 'arv.js' | asset_url }}" defer="defer"></script>
 
     <script>
       const productForm = document.querySelector('.main-product-form');
@@ -480,36 +473,5 @@
       {% endif %}
     </script>
 
-    {% if settings.disable_inspect %}
-      <script>
-        window.addEventListener("contextmenu", (e) => {
-          e.preventDefault();
-        });
-        document.addEventListener("selectstart", (e) => {
-          e.preventDefault();
-        });
-        document.addEventListener('DOMContentLoaded', function() {
-          document.querySelectorAll('img').forEach(img => {
-            img.addEventListener('dragstart', function(e) {
-              e.preventDefault();
-            })
-          })
-        })
-        function ctrlShiftKey(e, keyCode) {
-          return e.ctrlKey && e.shiftKey && e.keyCode === keyCode.charCodeAt(0);
-        }
-        document.addEventListener('keydown', function(e) {
-          if (
-            event.keyCode === 123 ||
-            ctrlShiftKey(e, 'I') ||
-            ctrlShiftKey(e, 'J') ||
-            ctrlShiftKey(e, 'C') ||
-            (e.ctrlKey && e.keyCode === 'U'.charCodeAt(0))
-          ) {
-            e.preventDefault();
-          }
-        })
-      </script>
-    {% endif %}
   </body>
 </html>

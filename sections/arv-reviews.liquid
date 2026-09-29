@@ -1,0 +1,253 @@
+{%- comment -%}
+  ARV Wear customer photo reviews.
+
+  CUSTOMER REVIEW content only: every block reproduces a review that already exists
+  in Judge.me (author, star rating, text and photos). Nothing is invented.
+  - Spain / Spanish storefront: the original text is shown.
+  - English storefront (US): the faithful English translation is shown, labelled
+    "Translated from Spanish" when the original was in Spanish.
+  - A transparency notice explains that the reviews were imported from AliExpress
+    (Theme settings > ARV Wear > Reviews).
+  The full, unedited list stays in the Judge.me widget below this section.
+{%- endcomment -%}
+{%- liquid
+  assign review_product = section.settings.product
+  assign is_english = false
+  if request.locale.iso_code contains 'en'
+    assign is_english = true
+  endif
+  assign all_reviews_link = section.settings.all_reviews_link
+  if all_reviews_link == blank
+    assign all_reviews_link = '#all-reviews'
+  endif
+-%}
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round }}px;
+  }
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+<div id="arv-reviews" class="arv-reviews color-{{ section.settings.color_scheme }} gradient">
+  <div class="page-width section-{{ section.id }}-padding">
+    <div class="arv-section-heading">
+      <h2 class="h2">{{ 'arv.reviews.heading' | t }}</h2>
+      {%- if review_product != blank -%}
+        {%- render 'arv-rating', product: review_product, link: all_reviews_link -%}
+      {%- endif -%}
+    </div>
+
+    <ul class="arv-reviews__list" role="list">
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign body = block.settings.original_text
+          assign show_translated_label = false
+          if is_english and block.settings.english_text != blank
+            assign body = block.settings.english_text
+            if block.settings.original_language == 'es'
+              assign show_translated_label = true
+            endif
+          endif
+          assign author = block.settings.author | strip
+          if author == blank
+            assign author = 'arv.reviews.anonymous' | t
+          endif
+          assign rating = block.settings.rating | times: 1
+          assign rating_percent = rating | times: 20
+          assign photos = block.settings.photos | newline_to_br | split: '<br />'
+        -%}
+        <li class="arv-review" {{ block.shopify_attributes }}>
+          {%- assign photo_count = 0 -%}
+          {%- capture photo_markup -%}
+            {%- for photo in photos -%}
+              {%- assign photo_url = photo | strip -%}
+              {%- if photo_url contains 'https://' -%}
+                {%- assign photo_count = photo_count | plus: 1 -%}
+                <button
+                  type="button"
+                  class="arv-review__photo"
+                  data-arv-photo="{{ photo_url | escape }}"
+                  data-arv-photo-alt="{{ 'arv.reviews.photo_alt' | t: name: author | escape }}"
+                  data-arv-close-label="{{ 'arv.reviews.close' | t | escape }}"
+                  aria-label="{{ 'arv.reviews.view_photo' | t: number: photo_count, name: author | escape }}"
+                >
+                  <img
+                    src="{{ photo_url | escape }}"
+                    alt="{{ 'arv.reviews.photo_alt' | t: name: author | escape }}"
+                    loading="lazy"
+                    decoding="async"
+                    width="160"
+                    height="160"
+                  >
+                </button>
+              {%- endif -%}
+            {%- endfor -%}
+          {%- endcapture -%}
+          {%- if photo_count > 0 -%}
+            <div class="arv-review__photos">{{ photo_markup }}</div>
+          {%- endif -%}
+          <div class="arv-review__body">
+            <span class="arv-stars" style="--arv-rating: {{ rating_percent }}%;" role="img" aria-label="{{ 'arv.product.rating_aria' | t: rating: rating }}"></span>
+            {%- if body != blank -%}
+              {%- assign is_long = false -%}
+              {%- if body.size > 220 -%}{%- assign is_long = true -%}{%- endif -%}
+              <p class="arv-review__text{% if is_long %} arv-review__text--clamped{% endif %}" id="ArvReviewText-{{ block.id }}">{{ body | escape | newline_to_br }}</p>
+              {%- if is_long -%}
+                <button
+                  type="button"
+                  class="arv-review__more"
+                  data-arv-more
+                  aria-controls="ArvReviewText-{{ block.id }}"
+                  aria-expanded="false"
+                  data-label-more="{{ 'arv.reviews.read_more' | t | escape }}"
+                  data-label-less="{{ 'arv.reviews.read_less' | t | escape }}"
+                >
+                  {{ 'arv.reviews.read_more' | t }}
+                </button>
+              {%- endif -%}
+            {%- endif -%}
+            <p class="arv-review__author">
+              <strong>{{ author | escape }}</strong>
+              {%- if show_translated_label -%}
+                <span class="arv-review__translated">{{ 'arv.reviews.translated' | t }}</span>
+              {%- endif -%}
+            </p>
+          </div>
+        </li>
+      {%- endfor -%}
+    </ul>
+
+    <div class="arv-reviews__footer">
+      {%- if settings.arv_reviews_imported -%}
+        <p class="arv-reviews__disclosure">{{ 'arv.reviews.disclosure' | t }}</p>
+      {%- endif -%}
+      {%- if section.settings.show_all_link -%}
+        <a class="button button--secondary" href="{{ all_reviews_link }}">{{ 'arv.reviews.read_all' | t }}</a>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "ARV photo reviews",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Each block must reproduce a real review that exists in Judge.me. Do not add invented reviews. The English text must be a faithful translation of the original."
+    },
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Product (for the real rating summary)"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_all_link",
+      "label": "Show \"Read all reviews\" button",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "all_reviews_link",
+      "label": "\"Read all reviews\" link",
+      "info": "Default: #all-reviews (the Apps section that contains the Judge.me widget on the product page, Anchor ID \"all-reviews\"). On the homepage use the product URL followed by #all-reviews."
+    },
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "options": [
+        { "value": "accent-1", "label": "Accent 1" },
+        { "value": "accent-2", "label": "Accent 2" },
+        { "value": "background-1", "label": "Background 1" },
+        { "value": "background-2", "label": "Background 2" },
+        { "value": "inverse", "label": "Inverse" }
+      ],
+      "default": "background-1"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 48
+    }
+  ],
+  "blocks": [
+    {
+      "type": "review",
+      "name": "Review",
+      "settings": [
+        {
+          "type": "text",
+          "id": "author",
+          "label": "Author (as shown in Judge.me)",
+          "info": "Leave empty to show a generic label (\"AliExpress buyer\")."
+        },
+        {
+          "type": "range",
+          "id": "rating",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "label": "Star rating",
+          "default": 5
+        },
+        {
+          "type": "select",
+          "id": "original_language",
+          "label": "Original language",
+          "options": [
+            { "value": "es", "label": "Spanish" },
+            { "value": "en", "label": "English" }
+          ],
+          "default": "es"
+        },
+        {
+          "type": "textarea",
+          "id": "original_text",
+          "label": "Original text (shown in Spain)"
+        },
+        {
+          "type": "textarea",
+          "id": "english_text",
+          "label": "English translation (shown in the US)",
+          "info": "Faithful translation. Do not add results, benefits or details that are not in the original."
+        },
+        {
+          "type": "textarea",
+          "id": "photos",
+          "label": "Photo URLs (one per line)",
+          "info": "Use the photo URLs of this same review in Judge.me."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "ARV photo reviews"
+    }
+  ]
+}
+{% endschema %}
